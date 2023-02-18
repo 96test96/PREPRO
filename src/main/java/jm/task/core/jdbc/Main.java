@@ -11,7 +11,7 @@ import jm.task.core.jdbc.util.Util;
 public class Main  {
     private final static UserService userService = new UserServiceImpl();
     public static void main(String[] args) {
-        Util.openConnection();
+        Util.getSessionFactory();
         userService.createUsersTable();
         userService.saveUser("Иван", "Сергеев", (byte) 78);
         userService.saveUser("Дмитрий", "Баев", (byte) 74);
