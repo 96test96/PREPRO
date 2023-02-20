@@ -42,41 +42,61 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.getCurrentSession();) {
-            session.beginTransaction();
+            transaction =  session.beginTransaction();
             User user = new User(name, lastName, age);
             session.save(user);
-            session.getTransaction().commit();
+            transaction.commit();
             System.out.println("User с именем " + name + " добавлен в базу данных");
+        } catch (Exception e) {
+           if(transaction != null) {
+               transaction.rollback();
+           }
         }
     }
 
     @Override
     public void removeUserById(long id) {
+        Transaction transaction = null;
         try (Session session = sessionFactory.getCurrentSession();) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createQuery("delete User where id = id").executeUpdate();
-            session.getTransaction().commit();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> list = new ArrayList<>();
+    public List <User> getAllUsers() {
+        List <User> list = new ArrayList<>();
+        Transaction transaction = null;
         try (Session session = sessionFactory.getCurrentSession();) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             list = session.createQuery("from User").getResultList();
-            session.getTransaction().commit();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
         }
         return list;
     }
 
     @Override
     public void cleanUsersTable() {
+        Transaction transaction = null;
         try (Session session = sessionFactory.getCurrentSession();) {
-            session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createQuery("delete User").executeUpdate();
-            session.getTransaction().commit();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
         }
     }
 
